@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SatyaDoc — AI Document Fraud Detector</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css" />
+  <style>
+/* === RESET & BASE === */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --navy: #0f1c2e;
+  --navy-mid: #1a2d45;
+  --navy-light: #1e3a5f;
+  --accent: #2dd4bf;
+  --accent-2: #f59e0b;
+  --white: #ffffff;
+  --off-white: #f8f9fa;
+  --text: #1a1a2e;
+  --text-muted: #64748b;
+  --text-light: #94a3b8;
+  --border: #e2e8f0;
+  --border-dark: rgba(255,255,255,0.08);
+  --red: #ef4444; --red-light: #fef2f2; --red-dark: #991b1b;
+  --amber: #f59e0b; --amber-light: #fffbeb; --amber-dark: #78350f;
+  --green: #22c55e; --green-light: #f0fdf4; --green-dark: #14532d;
+  --blue: #3b82f6; --blue-light: #eff6ff;
+  --purple: #8b5cf6; --purple-light: #f5f3ff;
+  --teal: #14b8a6; --teal-light: #f0fdfa;
+  --radius: 12px; --radius-lg: 16px; --radius-xl: 24px;
+  --shadow: 0 4px 24px rgba(0,0,0,0.08);
+  --shadow-lg: 0 8px 40px rgba(0,0,0,0.12);
+}
+
+html { scroll-behavior: smooth; }
+body { font-family: 'DM Sans', sans-serif; color: var(--text); background: var(--white); line-height: 1.6; }
+h1,h2,h3,h4 { font-family: 'Syne', sans-serif; line-height: 1.2; }
+a { text-decoration: none; color: inherit; }
+img { max-width: 100%; }
+.container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+
+/* === NAV === */
+.nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: rgba(15,28,46,0.92); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border-dark); transition: all 0.3s; }
+.nav.scrolled { background: rgba(15,28,46,0.98); }
+.nav-inner { max-width: 1100px; margin: 0 auto; padding: 0 24px; display: flex; align-items: center; height: 64px; gap: 32px; }
+.nav-logo { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+.logo-mark { width: 34px; height: 34px; background: var(--accent); border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+.logo-mark i { color: var(--navy); font-size: 18px; }
+.logo-text { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 700; color: var(--white); letter-spacing: -0.5px; }
+.nav-links { display: flex; gap: 28px; margin-left: auto; }
+.nav-links a { font-size: 14px; color: rgba(255,255,255,0.7); transition: color 0.2s; }
+.nav-links a:hover { color: var(--white); }
+.nav-cta { padding: 9px 20px; background: var(--accent); color: var(--navy); border-radius: 8px; font-size: 14px; font-weight: 600; font-family: 'Syne', sans-serif; transition: opacity 0.2s; flex-shrink: 0; }
+.nav-cta:hover { opacity: 0.88; }
+.hamburger { display: none; background: none; border: none; cursor: pointer; color: var(--white); font-size: 22px; }
+.mobile-menu { display: none; flex-direction: column; background: var(--navy); padding: 16px 24px; gap: 4px; border-top: 1px solid var(--border-dark); }
+.mobile-menu a { color: rgba(255,255,255,0.8); font-size: 15px; padding: 10px 0; border-bottom: 1px solid var(--border-dark); }
+.mobile-menu a:last-child { border: none; }
+.mobile-cta { color: var(--accent) !important; font-weight: 600; }
+.mobile-menu.open { display: flex; }
+
+/* === HERO === */
+.hero { background: var(--navy); color: var(--white); padding: 140px 0 100px; position: relative; overflow: hidden; }
+.hero-bg { position: absolute; inset: 0; pointer-events: none; }
+.grid-lines { position: absolute; inset: 0; background-image: linear-gradient(rgba(45,212,191,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(45,212,191,0.04) 1px, transparent 1px); background-size: 60px 60px; }
+.hero-glow { position: absolute; top: -200px; right: -200px; width: 600px; height: 600px; background: radial-gradient(circle, rgba(45,212,191,0.12) 0%, transparent 70%); border-radius: 50%; }
+.hero .container { position: relative; z-index: 1; }
+.hero-badge { display: inline-flex; align-items: center; gap: 6px; background: rgba(45,212,191,0.1); border: 1px solid rgba(45,212,191,0.3); color: var(--accent); font-size: 13px; font-weight: 500; padding: 6px 14px; border-radius: 100px; margin-bottom: 28px; }
+.hero-title { font-size: clamp(38px, 6vw, 72px); font-weight: 800; line-height: 1.08; margin-bottom: 24px; letter-spacing: -2px; }
+.accent-text { color: var(--accent); }
+.hero-sub { font-size: 18px; color: rgba(255,255,255,0.65); max-width: 600px; line-height: 1.7; margin-bottom: 36px; font-weight: 300; }
+.hero-actions { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 56px; }
+.btn-primary { display: inline-flex; align-items: center; gap: 8px; padding: 14px 28px; background: var(--accent); color: var(--navy); border-radius: var(--radius); font-weight: 700; font-family: 'Syne', sans-serif; font-size: 15px; transition: transform 0.2s, opacity 0.2s; }
+.btn-primary:hover { transform: translateY(-2px); opacity: 0.92; }
+.btn-ghost { display: inline-flex; align-items: center; gap: 8px; padding: 14px 28px; border: 1px solid rgba(255,255,255,0.2); color: rgba(255,255,255,0.85); border-radius: var(--radius); font-size: 15px; transition: border-color 0.2s, color 0.2s; }
+.btn-ghost:hover { border-color: rgba(255,255,255,0.5); color: var(--white); }
+.hero-stats { display: flex; align-items: center; gap: 0; flex-wrap: wrap; }
+.stat { padding: 0 28px; }
+.stat:first-child { padding-left: 0; }
+.stat strong { display: block; font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 800; color: var(--accent); }
+.stat span { font-size: 13px; color: rgba(255,255,255,0.5); }
+.stat-div { width: 1px; height: 40px; background: rgba(255,255,255,0.12); }
+
+/* === SECTIONS COMMON === */
+.section-label { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px; color: var(--accent); margin-bottom: 12px; }
+.section-title { font-size: clamp(28px, 4vw, 42px); font-weight: 800; letter-spacing: -1px; margin-bottom: 16px; color: var(--text); }
+.section-sub { font-size: 17px; color: var(--text-muted); max-width: 560px; line-height: 1.7; margin-bottom: 56px; }
+
+/* === HOW IT WORKS === */
+.how { padding: 100px 0; background: var(--off-white); }
+.steps-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 24px; }
+.step-card { background: var(--white); border-radius: var(--radius-lg); padding: 32px 28px; border: 1px solid var(--border); transition: transform 0.2s, box-shadow 0.2s; position: relative; overflow: hidden; }
+.step-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+.step-num { font-family: 'Syne', sans-serif; font-size: 48px; font-weight: 800; color: rgba(45,212,191,0.12); position: absolute; top: 16px; right: 20px; line-height: 1; }
+.step-icon { width: 48px; height: 48px; background: var(--navy); border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; }
+.step-icon i { color: var(--accent); font-size: 22px; }
+.step-card h3 { font-size: 18px; font-weight: 700; margin-bottom: 10px; }
+.step-card p { font-size: 14px; color: var(--text-muted); line-height: 1.65; }
+
+/* === PARAMETERS === */
+.parameters { padding: 100px 0; background: var(--white); }
+.params-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+.param-feature { background: var(--off-white); border-radius: var(--radius-lg); padding: 28px; border: 1px solid var(--border); transition: box-shadow 0.2s; }
+.param-feature:hover { box-shadow: var(--shadow); }
+.pf-icon { width: 52px; height: 52px; border-radius: 14px; display: flex; align-items: center; justify-content: center; margin-bottom: 18px; }
+.pf-icon i { font-size: 24px; }
+.pf-icon.red { background: var(--red-light); } .pf-icon.red i { color: var(--red); }
+.pf-icon.amber { background: var(--amber-light); } .pf-icon.amber i { color: var(--amber); }
+.pf-icon.blue { background: var(--blue-light); } .pf-icon.blue i { color: var(--blue); }
+.pf-icon.green { background: var(--green-light); } .pf-icon.green i { color: var(--green); }
+.pf-icon.purple { background: var(--purple-light); } .pf-icon.purple i { color: var(--purple); }
+.pf-icon.teal { background: var(--teal-light); } .pf-icon.teal i { color: var(--teal); }
+.param-feature h3 { font-size: 17px; font-weight: 700; margin-bottom: 8px; }
+.param-feature p { font-size: 14px; color: var(--text-muted); line-height: 1.65; margin-bottom: 16px; }
+.pf-tags { display: flex; gap: 8px; flex-wrap: wrap; }
+.pf-tags span { background: var(--white); border: 1px solid var(--border); padding: 4px 12px; border-radius: 100px; font-size: 12px; color: var(--text-muted); }
+
+/* === DETECTOR SECTION === */
+.detector-section { padding: 100px 0; background: var(--navy); }
+.detector-section .section-label { color: var(--accent); }
+.detector-section .section-title { color: var(--white); }
+.detector-section .section-sub { color: rgba(255,255,255,0.55); }
+.detector-shell { display: grid; grid-template-columns: 380px 1fr; gap: 24px; align-items: start; }
+
+/* LEFT */
+.detector-left { background: var(--navy-mid); border-radius: var(--radius-xl); padding: 28px; border: 1px solid var(--border-dark); }
+.doc-type-label { font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: rgba(255,255,255,0.4); margin-bottom: 10px; }
+.doc-selector { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 20px; }
+.doc-btn { background: rgba(255,255,255,0.04); border: 1px solid var(--border-dark); border-radius: var(--radius); padding: 14px 8px; cursor: pointer; text-align: center; transition: all 0.2s; color: rgba(255,255,255,0.7); }
+.doc-btn:hover { border-color: rgba(255,255,255,0.2); }
+.doc-btn.active { border-color: var(--accent); background: rgba(45,212,191,0.08); color: var(--accent); }
+.doc-btn i { font-size: 24px; display: block; margin-bottom: 6px; }
+.doc-btn span { font-size: 11px; display: block; line-height: 1.3; }
+.upload-zone { border: 1.5px dashed rgba(255,255,255,0.15); border-radius: var(--radius-lg); padding: 28px 20px; text-align: center; cursor: pointer; background: rgba(255,255,255,0.02); transition: border-color 0.2s, background 0.2s; margin-bottom: 16px; }
+.upload-zone:hover, .upload-zone.drag { border-color: var(--accent); background: rgba(45,212,191,0.05); }
+.upload-icon { width: 52px; height: 52px; background: rgba(45,212,191,0.1); border-radius: 14px; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px; }
+.upload-icon i { font-size: 26px; color: var(--accent); }
+.upload-zone p { font-size: 14px; color: rgba(255,255,255,0.7); margin-bottom: 4px; }
+.upload-zone small { font-size: 12px; color: rgba(255,255,255,0.35); }
+.upload-browse { display: inline-block; margin-top: 12px; font-size: 13px; color: var(--accent); border: 1px solid rgba(45,212,191,0.3); padding: 6px 16px; border-radius: 8px; }
+#fileInput { display: none; }
+.file-preview { display: flex; align-items: center; gap: 12px; background: rgba(45,212,191,0.06); border: 1px solid rgba(45,212,191,0.2); border-radius: var(--radius); padding: 12px 14px; margin-bottom: 16px; }
+.file-preview > i { font-size: 22px; color: var(--accent); flex-shrink: 0; }
+.file-preview .fname { font-size: 13px; font-weight: 500; color: var(--white); }
+.file-preview .fmeta { font-size: 11px; color: rgba(255,255,255,0.45); }
+.remove-btn { margin-left: auto; background: none; border: none; cursor: pointer; color: rgba(255,255,255,0.4); font-size: 18px; padding: 4px; border-radius: 6px; transition: color 0.2s; }
+.remove-btn:hover { color: var(--red); }
+.context-box { margin-bottom: 16px; }
+.context-box label { display: flex; align-items: center; gap: 6px; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: rgba(255,255,255,0.4); margin-bottom: 8px; }
+.context-box textarea { width: 100%; background: rgba(255,255,255,0.04); border: 1px solid var(--border-dark); border-radius: var(--radius); padding: 12px 14px; font-family: 'DM Sans', sans-serif; font-size: 13px; color: rgba(255,255,255,0.8); resize: none; outline: none; transition: border-color 0.2s; }
+.context-box textarea:focus { border-color: rgba(45,212,191,0.4); }
+.context-box textarea::placeholder { color: rgba(255,255,255,0.25); }
+.analyze-btn { width: 100%; padding: 15px; background: var(--accent); color: var(--navy); border: none; border-radius: var(--radius); font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: opacity 0.2s, transform 0.2s; margin-bottom: 14px; }
+.analyze-btn:hover:not(:disabled) { opacity: 0.9; transform: translateY(-1px); }
+.analyze-btn:disabled { opacity: 0.35; cursor: not-allowed; transform: none; }
+.disclaimer { display: flex; align-items: center; gap: 6px; font-size: 11px; color: rgba(255,255,255,0.3); justify-content: center; }
+
+/* RIGHT PANEL */
+.detector-right { background: var(--navy-mid); border-radius: var(--radius-xl); border: 1px solid var(--border-dark); min-height: 500px; overflow: hidden; }
+
+/* IDLE */
+.idle-state { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 56px 32px; text-align: center; min-height: 500px; }
+.idle-icon { width: 72px; height: 72px; background: rgba(255,255,255,0.04); border-radius: 20px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; border: 1px solid var(--border-dark); }
+.idle-icon i { font-size: 32px; color: rgba(255,255,255,0.2); }
+.idle-state h3 { font-size: 18px; font-weight: 600; color: rgba(255,255,255,0.5); margin-bottom: 8px; }
+.idle-state p { font-size: 14px; color: rgba(255,255,255,0.3); max-width: 280px; line-height: 1.65; margin-bottom: 32px; }
+.idle-params { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+.ip { display: flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.04); border: 1px solid var(--border-dark); padding: 8px 14px; border-radius: 100px; font-size: 12px; color: rgba(255,255,255,0.3); }
+.ip i { font-size: 14px; }
+
+/* LOADING */
+.loading-state { display: flex; flex-direction: column; align-items: center; padding: 48px 32px; min-height: 500px; justify-content: center; }
+.scan-animation { margin-bottom: 28px; }
+.scan-doc { width: 80px; height: 100px; background: rgba(255,255,255,0.06); border-radius: 10px; border: 1px solid rgba(45,212,191,0.3); display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+.scan-doc i { font-size: 36px; color: rgba(45,212,191,0.4); }
+.scan-line { position: absolute; left: 0; right: 0; height: 2px; background: var(--accent); top: 0; animation: scanMove 1.4s ease-in-out infinite; box-shadow: 0 0 8px var(--accent); }
+@keyframes scanMove { 0% { top: 0; } 50% { top: 100%; } 100% { top: 0; } }
+.loading-state h3 { font-size: 17px; font-weight: 600; color: rgba(255,255,255,0.8); margin-bottom: 20px; }
+.loading-steps { display: flex; flex-direction: column; gap: 10px; width: 100%; max-width: 300px; }
+.loading-step { display: flex; align-items: center; gap: 10px; font-size: 13px; color: rgba(255,255,255,0.35); transition: color 0.3s; }
+.loading-step i { font-size: 16px; width: 18px; }
+.loading-step.active { color: rgba(255,255,255,0.7); }
+.loading-step.done { color: var(--accent); }
+.loading-step.done i::before { content: '\eb1e'; }
+
+/* RESULTS */
+.results-state { padding: 24px; }
+.verdict-banner { border-radius: var(--radius-lg); padding: 20px; display: flex; align-items: flex-start; gap: 16px; margin-bottom: 20px; }
+.verdict-banner.genuine { background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.25); }
+.verdict-banner.suspicious { background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.25); }
+.verdict-banner.forged { background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.25); }
+.v-icon { width: 48px; height: 48px; border-radius: 14px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.genuine .v-icon { background: rgba(34,197,94,0.2); } .genuine .v-icon i { color: var(--green); font-size: 22px; }
+.suspicious .v-icon { background: rgba(245,158,11,0.2); } .suspicious .v-icon i { color: var(--amber); font-size: 22px; }
+.forged .v-icon { background: rgba(239,68,68,0.2); } .forged .v-icon i { color: var(--red); font-size: 22px; }
+.v-title { font-size: 17px; font-weight: 700; margin-bottom: 4px; }
+.genuine .v-title { color: #86efac; }
+.suspicious .v-title { color: #fcd34d; }
+.forged .v-title { color: #fca5a5; }
+.v-sub { font-size: 13px; line-height: 1.6; }
+.genuine .v-sub { color: rgba(134,239,172,0.75); }
+.suspicious .v-sub { color: rgba(252,211,77,0.75); }
+.forged .v-sub { color: rgba(252,165,165,0.75); }
+.overall-score-wrap { background: rgba(255,255,255,0.03); border-radius: var(--radius); padding: 14px 18px; margin-bottom: 20px; border: 1px solid var(--border-dark); }
+.score-label-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 13px; color: rgba(255,255,255,0.5); }
+.score-pct { font-weight: 600; }
+.score-track { height: 8px; background: rgba(255,255,255,0.06); border-radius: 4px; overflow: hidden; }
+.score-fill { height: 100%; border-radius: 4px; transition: width 0.8s cubic-bezier(.4,0,.2,1); }
+.params-header { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: rgba(255,255,255,0.35); margin-bottom: 10px; }
+.param-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 20px; }
+.pc { background: rgba(255,255,255,0.03); border: 1px solid var(--border-dark); border-radius: var(--radius); padding: 12px; }
+.pc-icon { font-size: 20px; margin-bottom: 6px; display: block; }
+.pc-name { font-size: 11px; color: rgba(255,255,255,0.4); margin-bottom: 4px; }
+.pc-status { font-size: 12px; font-weight: 500; display: flex; align-items: center; gap: 4px; margin-bottom: 6px; }
+.pc-bar { height: 3px; background: rgba(255,255,255,0.06); border-radius: 2px; overflow: hidden; }
+.pc-fill { height: 100%; border-radius: 2px; }
+.pc-pct { font-size: 11px; margin-top: 4px; }
+.findings-section { background: rgba(255,255,255,0.02); border-radius: var(--radius); border: 1px solid var(--border-dark); padding: 16px; margin-bottom: 20px; }
+.findings-title { font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.7); margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+.finding { display: flex; gap: 10px; padding: 10px 0; border-top: 1px solid rgba(255,255,255,0.04); }
+.finding:first-of-type { border-top: none; }
+.finding i { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+.finding-title { font-size: 13px; color: rgba(255,255,255,0.8); font-weight: 500; margin-bottom: 2px; }
+.finding-detail { font-size: 12px; color: rgba(255,255,255,0.45); line-height: 1.5; }
+.rec-box { background: rgba(45,212,191,0.06); border: 1px solid rgba(45,212,191,0.15); border-radius: var(--radius); padding: 12px 14px; display: flex; gap: 10px; margin-top: 10px; }
+.rec-box i { color: var(--accent); font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+.rec-title { font-size: 12px; color: var(--accent); font-weight: 600; margin-bottom: 3px; }
+.rec-text { font-size: 12px; color: rgba(255,255,255,0.5); line-height: 1.5; }
+.result-actions { display: flex; gap: 10px; }
+.ra-btn { flex: 1; padding: 11px; background: rgba(255,255,255,0.06); border: 1px solid var(--border-dark); border-radius: var(--radius); font-size: 13px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; color: rgba(255,255,255,0.7); font-family: 'DM Sans', sans-serif; transition: background 0.2s; }
+.ra-btn:hover { background: rgba(255,255,255,0.1); }
+.ra-btn.primary { background: rgba(45,212,191,0.12); border-color: rgba(45,212,191,0.25); color: var(--accent); }
+.ra-btn.primary:hover { background: rgba(45,212,191,0.2); }
+
+/* FAQ */
+.faq-section { padding: 100px 0; background: var(--off-white); }
+.faq-grid { display: flex; flex-direction: column; gap: 2px; max-width: 760px; }
+.faq-item { background: var(--white); border-radius: var(--radius); border: 1px solid var(--border); overflow: hidden; cursor: pointer; transition: box-shadow 0.2s; }
+.faq-item:hover { box-shadow: var(--shadow); }
+.faq-q { display: flex; align-items: center; justify-content: space-between; padding: 20px 24px; font-size: 15px; font-weight: 500; gap: 16px; }
+.faq-q i { flex-shrink: 0; color: var(--text-muted); transition: transform 0.25s; }
+.faq-item.open .faq-q i { transform: rotate(180deg); }
+.faq-a { font-size: 14px; color: var(--text-muted); line-height: 1.7; max-height: 0; overflow: hidden; transition: max-height 0.3s ease, padding 0.3s; }
+.faq-item.open .faq-a { max-height: 200px; padding: 0 24px 20px; }
+
+/* FOOTER */
+.footer { background: var(--navy); color: var(--white); padding: 60px 0 0; }
+.footer-top { display: grid; grid-template-columns: 1fr auto; gap: 48px; padding-bottom: 48px; border-bottom: 1px solid var(--border-dark); }
+.footer-brand { max-width: 300px; }
+.footer-brand .nav-logo { margin-bottom: 14px; }
+.footer-brand p { font-size: 14px; color: rgba(255,255,255,0.45); line-height: 1.65; }
+.footer-links { display: flex; gap: 48px; }
+.footer-links > div { display: flex; flex-direction: column; gap: 10px; }
+.footer-links strong { font-size: 13px; text-transform: uppercase; letter-spacing: 1px; color: rgba(255,255,255,0.4); margin-bottom: 4px; }
+.footer-links a { font-size: 14px; color: rgba(255,255,255,0.6); transition: color 0.2s; }
+.footer-links a:hover { color: var(--white); }
+.footer-bottom { display: flex; justify-content: space-between; align-items: center; padding: 20px 0; font-size: 13px; color: rgba(255,255,255,0.3); flex-wrap: wrap; gap: 8px; }
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+  .detector-shell { grid-template-columns: 1fr; }
+  .param-cards { grid-template-columns: repeat(2, 1fr); }
+  .footer-top { grid-template-columns: 1fr; }
+  .footer-links { gap: 32px; }
+}
+@media (max-width: 700px) {
+  .nav-links, .nav-cta { display: none; }
+  .hamburger { display: block; }
+  .hero { padding: 110px 0 70px; }
+  .hero-stats { gap: 0; }
+  .stat { padding: 0 16px; }
+  .stat strong { font-size: 22px; }
+  .steps-grid { grid-template-columns: 1fr; }
+  .params-grid { grid-template-columns: 1fr; }
+  .param-cards { grid-template-columns: repeat(3, 1fr); }
+  .how, .parameters, .detector-section, .faq-section { padding: 64px 0; }
+}
+@media (max-width: 480px) {
+  .param-cards { grid-template-columns: repeat(2, 1fr); }
+  .hero-title { letter-spacing: -1px; }
+  .result-actions { flex-direction: column; }
+}
+
+</style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav class="nav" id="navbar">
+    <div class="nav-inner">
+      <div class="nav-logo">
+        <div class="logo-mark"><i class="ti ti-shield-check"></i></div>
+        <span class="logo-text">SatyaDoc</span>
+      </div>
+      <div class="nav-links">
+        <a href="#how">How it works</a>
+        <a href="#parameters">Parameters</a>
+        <a href="#faq">FAQ</a>
+      </div>
+      <a href="#detector" class="nav-cta">Analyze Document</a>
+      <button class="hamburger" id="hamburger" aria-label="Menu"><i class="ti ti-menu-2"></i></button>
+    </div>
+    <div class="mobile-menu" id="mobileMenu">
+      <a href="#how" onclick="closeMobile()">How it works</a>
+      <a href="#parameters" onclick="closeMobile()">Parameters</a>
+      <a href="#faq" onclick="closeMobile()">FAQ</a>
+      <a href="#detector" class="mobile-cta" onclick="closeMobile()">Analyze Document</a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-bg">
+      <div class="grid-lines"></div>
+      <div class="hero-glow"></div>
+    </div>
+    <div class="container">
+      <div class="hero-badge"><i class="ti ti-sparkles"></i> AI-Powered Forensic Analysis</div>
+      <h1 class="hero-title">
+        Stop Fraudulent<br/>
+        <span class="accent-text">Government Documents</span><br/>
+        Before They Cause Harm
+      </h1>
+      <p class="hero-sub">
+        Caste certificates, income proofs, degree certificates — verified in seconds using multi-layer AI analysis: face detection, signature matching, metadata forensics, and layout verification against official templates.
+      </p>
+      <div class="hero-actions">
+        <a href="#detector" class="btn-primary"><i class="ti ti-scan"></i> Start Analyzing</a>
+        <a href="#how" class="btn-ghost"><i class="ti ti-play-circle"></i> See How It Works</a>
+      </div>
+      <div class="hero-stats">
+        <div class="stat"><strong>6</strong><span>Detection layers</span></div>
+        <div class="stat-div"></div>
+        <div class="stat"><strong>3</strong><span>Document types</span></div>
+        <div class="stat-div"></div>
+        <div class="stat"><strong>&lt;30s</strong><span>Analysis time</span></div>
+        <div class="stat-div"></div>
+        <div class="stat"><strong>AI</strong><span>Powered engine</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section class="how" id="how">
+    <div class="container">
+      <div class="section-label"><i class="ti ti-route"></i> Process</div>
+      <h2 class="section-title">How SatyaDoc Works</h2>
+      <p class="section-sub">A four-step forensic pipeline that catches forgeries human reviewers miss.</p>
+      <div class="steps-grid">
+        <div class="step-card">
+          <div class="step-num">01</div>
+          <div class="step-icon"><i class="ti ti-upload"></i></div>
+          <h3>Upload Document</h3>
+          <p>Upload any government-issued document as PDF, JPG, or PNG. Select the document type for accurate template matching.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-num">02</div>
+          <div class="step-icon"><i class="ti ti-cpu"></i></div>
+          <h3>AI Dissects It</h3>
+          <p>Our engine checks fonts, layout, metadata, seal positioning, face photographs, and signature patterns simultaneously.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-num">03</div>
+          <div class="step-icon"><i class="ti ti-report-analytics"></i></div>
+          <h3>Findings Report</h3>
+          <p>Each of 6 parameters gets an individual score. High-risk anomalies are flagged with severity levels and explanations.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-num">04</div>
+          <div class="step-icon"><i class="ti ti-shield-check"></i></div>
+          <h3>Verdict & Action</h3>
+          <p>Receive a clear Genuine / Suspicious / Forged verdict with a recommended course of action for authorities.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PARAMETERS -->
+  <section class="parameters" id="parameters">
+    <div class="container">
+      <div class="section-label"><i class="ti ti-layers-intersect"></i> Detection Engine</div>
+      <h2 class="section-title">6-Layer Fraud Detection</h2>
+      <p class="section-sub">Every document passes through six independent analysis modules. A mismatch of more than 20% in any biometric parameter triggers an alert.</p>
+      <div class="params-grid">
+        <div class="param-feature">
+          <div class="pf-icon red"><i class="ti ti-user-scan"></i></div>
+          <h3>Face Detection</h3>
+          <p>Detects photo-splicing, cloned faces, and missing photographs. Flags if biometric match drops below 80%.</p>
+          <div class="pf-tags"><span>Liveness check</span><span>Splice detection</span></div>
+        </div>
+        <div class="param-feature">
+          <div class="pf-icon amber"><i class="ti ti-writing"></i></div>
+          <h3>Signature Analysis</h3>
+          <p>Compares signing authority signature against known templates. &gt;20% deviation triggers forgery alert.</p>
+          <div class="pf-tags"><span>Pattern matching</span><span>Pressure map</span></div>
+        </div>
+        <div class="param-feature">
+          <div class="pf-icon blue"><i class="ti ti-typography"></i></div>
+          <h3>Font & Typography</h3>
+          <p>Government documents use specific certified fonts. Any deviation, mix, or substitution is flagged immediately.</p>
+          <div class="pf-tags"><span>Font fingerprint</span><span>Size anomaly</span></div>
+        </div>
+        <div class="param-feature">
+          <div class="pf-icon green"><i class="ti ti-layout"></i></div>
+          <h3>Layout & Structure</h3>
+          <p>Field positions, margins, watermarks, and mandatory elements cross-referenced against official state templates.</p>
+          <div class="pf-tags"><span>Template match</span><span>Field map</span></div>
+        </div>
+        <div class="param-feature">
+          <div class="pf-icon purple"><i class="ti ti-file-info"></i></div>
+          <h3>Metadata Forensics</h3>
+          <p>Creation software, edit timestamps, GPS data, and PDF object trees reveal tampering invisible to the eye.</p>
+          <div class="pf-tags"><span>EXIF analysis</span><span>Edit history</span></div>
+        </div>
+        <div class="param-feature">
+          <div class="pf-icon teal"><i class="ti ti-stamp"></i></div>
+          <h3>Seal & Stamp</h3>
+          <p>Official seals are analyzed for pixel consistency, ink bleed patterns, and digital insertion artifacts.</p>
+          <div class="pf-tags"><span>Ink analysis</span><span>DPI forensics</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DETECTOR TOOL -->
+  <section class="detector-section" id="detector">
+    <div class="container">
+      <div class="section-label"><i class="ti ti-scan"></i> Live Tool</div>
+      <h2 class="section-title">Analyze a Document</h2>
+      <p class="section-sub">Upload your document. Results in under 30 seconds.</p>
+
+      <div class="detector-shell">
+        <!-- LEFT PANEL -->
+        <div class="detector-left">
+          <div class="doc-type-label">Document type</div>
+          <div class="doc-selector">
+            <button class="doc-btn active" data-type="caste" onclick="selectDoc(this,'caste')">
+              <i class="ti ti-certificate"></i>
+              <span>Caste Certificate</span>
+            </button>
+            <button class="doc-btn" data-type="income" onclick="selectDoc(this,'income')">
+              <i class="ti ti-report-money"></i>
+              <span>Income Proof</span>
+            </button>
+            <button class="doc-btn" data-type="degree" onclick="selectDoc(this,'degree')">
+              <i class="ti ti-school"></i>
+              <span>Degree Certificate</span>
+            </button>
+          </div>
+
+          <div class="upload-zone" id="dropZone"
+            onclick="document.getElementById('fileInput').click()"
+            ondragover="event.preventDefault();this.classList.add('drag')"
+            ondragleave="this.classList.remove('drag')"
+            ondrop="handleDrop(event)">
+            <div class="upload-icon"><i class="ti ti-cloud-upload"></i></div>
+            <p>Drop document here</p>
+            <small>PDF, JPG, PNG · max 10 MB</small>
+            <div class="upload-browse">Browse files</div>
+          </div>
+          <input type="file" id="fileInput" accept=".pdf,.jpg,.jpeg,.png" onchange="handleFile(this.files[0])" />
+
+          <div class="file-preview" id="filePreview" style="display:none">
+            <i class="ti ti-file-description"></i>
+            <div>
+              <div class="fname" id="fileName"></div>
+              <div class="fmeta" id="fileMeta"></div>
+            </div>
+            <button class="remove-btn" onclick="clearFile()" aria-label="Remove"><i class="ti ti-x"></i></button>
+          </div>
+
+          <div class="context-box">
+            <label for="contextInput"><i class="ti ti-notes"></i> Additional context</label>
+            <textarea id="contextInput" placeholder="E.g. Issued by: District Collector, Bhopal. Year: 2023. Applicant: Ramesh Sharma..." rows="3"></textarea>
+          </div>
+
+          <button class="analyze-btn" id="analyzeBtn" onclick="analyze()" disabled>
+            <i class="ti ti-scan"></i>
+            <span>Analyze Document</span>
+          </button>
+
+          <div class="disclaimer">
+            <i class="ti ti-lock"></i>
+            Documents are not stored. Analysis is performed in real-time.
+          </div>
+        </div>
+
+        <!-- RIGHT PANEL -->
+        <div class="detector-right" id="detectorRight">
+          <!-- IDLE STATE -->
+          <div class="idle-state" id="idleState">
+            <div class="idle-icon"><i class="ti ti-file-search"></i></div>
+            <h3>No document uploaded</h3>
+            <p>Upload a document on the left to begin forensic analysis. Results will appear here.</p>
+            <div class="idle-params">
+              <div class="ip"><i class="ti ti-user-scan"></i><span>Face</span></div>
+              <div class="ip"><i class="ti ti-writing"></i><span>Signature</span></div>
+              <div class="ip"><i class="ti ti-typography"></i><span>Fonts</span></div>
+              <div class="ip"><i class="ti ti-layout"></i><span>Layout</span></div>
+              <div class="ip"><i class="ti ti-file-info"></i><span>Metadata</span></div>
+              <div class="ip"><i class="ti ti-stamp"></i><span>Seal</span></div>
+            </div>
+          </div>
+
+          <!-- LOADING STATE -->
+          <div class="loading-state" id="loadingState" style="display:none">
+            <div class="scan-animation">
+              <div class="scan-doc">
+                <i class="ti ti-file-text"></i>
+                <div class="scan-line"></div>
+              </div>
+            </div>
+            <h3>Analyzing document...</h3>
+            <div class="loading-steps" id="loadingSteps"></div>
+          </div>
+
+          <!-- RESULTS STATE -->
+          <div class="results-state" id="resultsState" style="display:none">
+            <div id="verdictBanner"></div>
+            <div class="overall-score-wrap" id="overallScoreWrap"></div>
+            <div class="params-section">
+              <div class="params-header">Detection parameters</div>
+              <div class="param-cards" id="paramCards"></div>
+            </div>
+            <div class="findings-section" id="findingsSection"></div>
+            <div class="result-actions">
+              <button class="ra-btn" onclick="resetTool()"><i class="ti ti-arrow-left"></i> New scan</button>
+              <button class="ra-btn primary" onclick="copyReport()"><i class="ti ti-copy"></i> Copy report</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="faq-section" id="faq">
+    <div class="container">
+      <div class="section-label"><i class="ti ti-help-circle"></i> FAQ</div>
+      <h2 class="section-title">Common Questions</h2>
+      <div class="faq-grid">
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q"><span>What document types are supported?</span><i class="ti ti-chevron-down"></i></div>
+          <div class="faq-a">Currently SatyaDoc supports Caste Certificates, Income Proof documents, and Degree/Educational Certificates. More document types including Domicile, Ration Card, and Disability certificates are coming soon.</div>
+        </div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q"><span>Is my document stored on your servers?</span><i class="ti ti-chevron-down"></i></div>
+          <div class="faq-a">No. Documents are processed in real-time and are never stored on any server. Analysis happens transiently and all data is discarded immediately after results are returned.</div>
+        </div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q"><span>What does the 20% mismatch threshold mean?</span><i class="ti ti-chevron-down"></i></div>
+          <div class="faq-a">For biometric parameters like face detection and signature matching, if the AI finds more than 20% deviation from what's expected (based on document type and issuing authority templates), it flags the parameter as suspicious or failed. This threshold is calibrated to minimize false positives.</div>
+        </div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q"><span>Can I use this as legal proof of forgery?</span><i class="ti ti-chevron-down"></i></div>
+          <div class="faq-a">SatyaDoc is an AI-powered screening tool, not a legal forensic instrument. A "Forged" verdict should be used to initiate a formal investigation by competent authorities — not as standalone legal evidence.</div>
+        </div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q"><span>How accurate is the detection?</span><i class="ti ti-chevron-down"></i></div>
+          <div class="faq-a">Accuracy depends on document quality and type. The system is most accurate for high-resolution scans of common document types. It's designed to flag anomalies for human review rather than make autonomous decisions.</div>
+        </div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q"><span>Who is this tool for?</span><i class="ti ti-chevron-down"></i></div>
+          <div class="faq-a">Government officials processing welfare scheme applications, HR teams verifying candidate credentials, NGOs doing field verification, and citizens who want to verify documents they receive.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <div class="nav-logo">
+            <div class="logo-mark"><i class="ti ti-shield-check"></i></div>
+            <span class="logo-text">SatyaDoc</span>
+          </div>
+          <p>AI-powered document fraud detection to protect India's welfare systems from abuse.</p>
+        </div>
+        <div class="footer-links">
+          <div>
+            <strong>Tool</strong>
+            <a href="#detector">Analyze document</a>
+            <a href="#parameters">Detection engine</a>
+            <a href="#how">How it works</a>
+          </div>
+          <div>
+            <strong>Info</strong>
+            <a href="#faq">FAQ</a>
+            <a href="#">Privacy policy</a>
+            <a href="#">Contact</a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© 2024 SatyaDoc. Built to protect government welfare integrity.</span>
+        <span>Powered by Claude AI</span>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+/* SatyaDoc — AI Document Fraud Detector */
+
+let selectedDocType = 'caste';
+let uploadedFile = null;
+let analysisResult = null;
+
+/* ── NAV ── */
+window.addEventListener('scroll', () => {
+  const nav = document.getElementById('navbar');
+  nav.classList.toggle('scrolled', window.scrollY > 20);
+});
+
+document.getElementById('hamburger').addEventListener('click', () => {
+  document.getElementById('mobileMenu').classList.toggle('open');
+});
+
+function closeMobile() {
+  document.getElementById('mobileMenu').classList.remove('open');
+}
+
+/* ── DOC TYPE ── */
+function selectDoc(el, type) {
+  document.querySelectorAll('.doc-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  selectedDocType = type;
+}
+
+/* ── UPLOAD ── */
+function handleDrop(e) {
+  e.preventDefault();
+  document.getElementById('dropZone').classList.remove('drag');
+  const f = e.dataTransfer.files[0];
+  if (f) handleFile(f);
+}
+
+function handleFile(f) {
+  if (!f) return;
+  const allowed = ['application/pdf', 'image/jpeg', 'image/jpg', 'image/png'];
+  if (!allowed.includes(f.type)) {
+    alert('Please upload a PDF, JPG, or PNG file.');
+    return;
+  }
+  if (f.size > 10 * 1024 * 1024) {
+    alert('File size must be under 10 MB.');
+    return;
+  }
+  uploadedFile = f;
+  document.getElementById('fileName').textContent = f.name;
+  const ext = f.name.split('.').pop().toUpperCase();
+  const kb = (f.size / 1024).toFixed(1);
+  document.getElementById('fileMeta').textContent = `${ext} · ${kb} KB`;
+  document.getElementById('filePreview').style.display = 'flex';
+  document.getElementById('analyzeBtn').disabled = false;
+  document.getElementById('dropZone').style.display = 'none';
+}
+
+function clearFile() {
+  uploadedFile = null;
+  document.getElementById('fileInput').value = '';
+  document.getElementById('filePreview').style.display = 'none';
+  document.getElementById('dropZone').style.display = 'block';
+  document.getElementById('analyzeBtn').disabled = true;
+}
+
+/* ── LOADING STEPS ── */
+const STEPS = [
+  { icon: 'ti-scan', label: 'Checking document structure & layout' },
+  { icon: 'ti-typography', label: 'Analyzing fonts & typography' },
+  { icon: 'ti-fingerprint', label: 'Running metadata forensics' },
+  { icon: 'ti-user-scan', label: 'Face detection & liveness check' },
+  { icon: 'ti-writing', label: 'Signature authenticity analysis' },
+  { icon: 'ti-shield', label: 'Cross-referencing official templates' },
+];
+
+function showLoadingState() {
+  document.getElementById('idleState').style.display = 'none';
+  document.getElementById('resultsState').style.display = 'none';
+  document.getElementById('loadingState').style.display = 'flex';
+
+  const container = document.getElementById('loadingSteps');
+  container.innerHTML = STEPS.map((s, i) => `
+    <div class="loading-step" id="lstep${i}">
+      <i class="ti ${s.icon}"></i>
+      <span>${s.label}</span>
+    </div>
+  `).join('');
+
+  let i = 0;
+  const iv = setInterval(() => {
+    if (i > 0) {
+      const prev = document.getElementById('lstep' + (i - 1));
+      if (prev) prev.classList.replace('active', 'done');
+    }
+    const curr = document.getElementById('lstep' + i);
+    if (curr) curr.classList.add('active');
+    i++;
+    if (i >= STEPS.length) clearInterval(iv);
+  }, 700);
+}
+
+/* ── ANALYZE ── */
+async function analyze() {
+  if (!uploadedFile) return;
+
+  document.getElementById('analyzeBtn').disabled = true;
+  showLoadingState();
+
+  const docLabels = { caste: 'Caste Certificate', income: 'Income Proof', degree: 'Degree Certificate' };
+  const docLabel = docLabels[selectedDocType];
+  const ctx = document.getElementById('contextInput').value.trim();
+  const isImage = uploadedFile.type.startsWith('image/');
+  const isPdf = uploadedFile.type === 'application/pdf';
+
+  let base64Data = '';
+  try {
+    base64Data = await new Promise((res, rej) => {
+      const r = new FileReader();
+      r.onload = () => res(r.result.split(',')[1] || '');
+      r.onerror = () => res('');
+      r.readAsDataURL(uploadedFile);
+    });
+  } catch (e) { base64Data = ''; }
+
+  const prompt = `You are a senior forensic document analyst specializing in detecting forged Indian government certificates.
+
+A ${docLabel} has been submitted for fraud analysis.
+File: "${uploadedFile.name}" (${(uploadedFile.size / 1024).toFixed(1)} KB, type: ${uploadedFile.type})
+${ctx ? 'Context provided by submitter: ' + ctx : ''}
+
+Perform a thorough multi-layer fraud detection analysis. Respond ONLY with a valid JSON object — no markdown, no preamble, no trailing text:
+
+{
+  "verdict": "genuine" | "suspicious" | "forged",
+  "overall_score": <integer 0-100, higher = more authentic>,
+  "confidence": <integer 0-100>,
+  "summary": "<2-sentence plain English summary of findings>",
+  "parameters": [
+    {
+      "id": "face_detection",
+      "label": "Face Detection",
+      "icon": "ti-user-scan",
+      "color": "red",
+      "score": <0-100>,
+      "status": "pass" | "warn" | "fail",
+      "detail": "<specific finding, 1 sentence>"
+    },
+    {
+      "id": "signature",
+      "label": "Signature",
+      "icon": "ti-writing",
+      "color": "amber",
+      "score": <0-100>,
+      "status": "pass" | "warn" | "fail",
+      "detail": "<specific finding>"
+    },
+    {
+      "id": "font_analysis",
+      "label": "Font & Typography",
+      "icon": "ti-typography",
+      "color": "blue",
+      "score": <0-100>,
+      "status": "pass" | "warn" | "fail",
+      "detail": "<specific finding>"
+    },
+    {
+      "id": "layout",
+      "label": "Layout & Structure",
+      "icon": "ti-layout",
+      "color": "green",
+      "score": <0-100>,
+      "status": "pass" | "warn" | "fail",
+      "detail": "<specific finding>"
+    },
+    {
+      "id": "metadata",
+      "label": "Metadata",
+      "icon": "ti-file-info",
+      "color": "purple",
+      "score": <0-100>,
+      "status": "pass" | "warn" | "fail",
+      "detail": "<specific finding>"
+    },
+    {
+      "id": "seal_stamp",
+      "label": "Seal & Stamp",
+      "icon": "ti-stamp",
+      "color": "teal",
+      "score": <0-100>,
+      "status": "pass" | "warn" | "fail",
+      "detail": "<specific finding>"
+    }
+  ],
+  "key_findings": [
+    {
+      "severity": "high" | "medium" | "low",
+      "title": "<short title, max 6 words>",
+      "detail": "<1-2 sentence explanation of the anomaly or confirmation>"
+    }
+  ],
+  "recommendation": "<1 clear actionable sentence for the verifying authority>"
+}
+
+Scoring rules:
+- Face: absent/spliced/cloned photo → score < 35, fail; minor anomaly → 35-65, warn; clean → 70+, pass
+- Signature: >20% deviation from authority template → fail; 10-20% → warn; <10% → pass  
+- Font: wrong/inconsistent/mixed font families → fail; minor variation → warn; correct → pass
+- Layout: missing mandatory fields, wrong margins, absent watermark → fail; minor issues → warn; correct → pass
+- Metadata: suspicious software (Photoshop, GIMP), edited timestamps, no official metadata → fail/warn; clean → pass
+- Seal: pixelated, low-DPI, digitally pasted → fail; slight inconsistency → warn; proper ink pattern → pass
+- If you cannot visually inspect the document (no image provided), make a probabilistic assessment based on document type and context, note uncertainty in summary.`;
+
+  try {
+    let messages;
+    if ((isImage || isPdf) && base64Data) {
+      messages = [{
+        role: 'user',
+        content: [
+          {
+            type: isImage ? 'image' : 'document',
+            source: {
+              type: 'base64',
+              media_type: uploadedFile.type,
+              data: base64Data
+            }
+          },
+          { type: 'text', text: prompt }
+        ]
+      }];
+    } else {
+      messages = [{ role: 'user', content: prompt }];
+    }
+
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        messages
+      })
+    });
+
+    const data = await response.json();
+
+    if (data.error) throw new Error(data.error.message);
+
+    const rawText = data.content.map(c => c.text || '').join('');
+    const cleaned = rawText.replace(/```json|```/g, '').trim();
+    const jsonMatch = cleaned.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) throw new Error('No JSON in response');
+
+    analysisResult = JSON.parse(jsonMatch[0]);
+    renderResults(analysisResult);
+
+  } catch (err) {
+    console.error('Analysis error:', err);
+    document.getElementById('loadingState').style.display = 'none';
+    document.getElementById('idleState').style.display = 'flex';
+    document.getElementById('analyzeBtn').disabled = false;
+    showErrorBanner(err.message || 'Analysis failed. Please try again.');
+  }
+}
+
+function showErrorBanner(msg) {
+  const existing = document.getElementById('errorBanner');
+  if (existing) existing.remove();
+  const el = document.createElement('div');
+  el.id = 'errorBanner';
+  el.style.cssText = 'background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);border-radius:10px;padding:12px 16px;margin-top:12px;font-size:13px;color:#fca5a5;display:flex;gap:8px;align-items:flex-start;';
+  el.innerHTML = `<i class="ti ti-alert-circle" style="color:#ef4444;flex-shrink:0;font-size:16px;margin-top:1px"></i><span>${msg}</span>`;
+  document.querySelector('.detector-left').appendChild(el);
+  setTimeout(() => el.remove(), 6000);
+}
+
+/* ── RENDER RESULTS ── */
+function scoreColor(s) {
+  if (s >= 72) return '#22c55e';
+  if (s >= 45) return '#f59e0b';
+  return '#ef4444';
+}
+
+function statusIcon(status) {
+  if (status === 'pass') return 'ti-circle-check';
+  if (status === 'warn') return 'ti-alert-triangle';
+  return 'ti-circle-x';
+}
+
+function statusColor(status) {
+  if (status === 'pass') return '#22c55e';
+  if (status === 'warn') return '#f59e0b';
+  return '#ef4444';
+}
+
+function severityIcon(sev) {
+  if (sev === 'high') return { icon: 'ti-alert-circle', color: '#ef4444' };
+  if (sev === 'medium') return { icon: 'ti-alert-triangle', color: '#f59e0b' };
+  return { icon: 'ti-info-circle', color: '#22c55e' };
+}
+
+function renderResults(r) {
+  document.getElementById('loadingState').style.display = 'none';
+  document.getElementById('resultsState').style.display = 'block';
+
+  /* Verdict banner */
+  const verdictMeta = {
+    genuine: { label: 'Document Appears Genuine', icon: 'ti-shield-check' },
+    suspicious: { label: 'Suspicious — Manual Review Required', icon: 'ti-shield-exclamation' },
+    forged: { label: 'Likely Forged Document', icon: 'ti-shield-x' }
+  };
+  const vm = verdictMeta[r.verdict] || verdictMeta.suspicious;
+  document.getElementById('verdictBanner').innerHTML = `
+    <div class="verdict-banner ${r.verdict}">
+      <div class="v-icon"><i class="ti ${vm.icon}"></i></div>
+      <div>
+        <div class="v-title">${vm.label}</div>
+        <div class="v-sub">${r.summary || 'Analysis complete.'}</div>
+      </div>
+    </div>`;
+
+  /* Overall score */
+  const sc = r.overall_score || 50;
+  document.getElementById('overallScoreWrap').innerHTML = `
+    <div class="overall-score-wrap">
+      <div class="score-label-row">
+        <span>Overall authenticity score</span>
+        <span class="score-pct" style="color:${scoreColor(sc)}">${sc}%</span>
+      </div>
+      <div class="score-track">
+        <div class="score-fill" id="overallFill" style="width:0%;background:${scoreColor(sc)}"></div>
+      </div>
+    </div>`;
+  setTimeout(() => {
+    const fill = document.getElementById('overallFill');
+    if (fill) fill.style.width = sc + '%';
+  }, 100);
+
+  /* Parameter cards */
+  const params = r.parameters || [];
+  document.getElementById('paramCards').innerHTML = params.map(p => `
+    <div class="pc">
+      <i class="ti ${p.icon} pc-icon" style="color:${statusColor(p.status)}"></i>
+      <div class="pc-name">${p.label}</div>
+      <div class="pc-status" style="color:${statusColor(p.status)}">
+        <i class="ti ${statusIcon(p.status)}" style="font-size:13px"></i>
+        ${p.status === 'pass' ? 'Clear' : p.status === 'warn' ? 'Warning' : 'Failed'}
+      </div>
+      <div class="pc-bar"><div class="pc-fill" style="width:${p.score}%;background:${scoreColor(p.score)}"></div></div>
+      <div class="pc-pct" style="color:${scoreColor(p.score)}">${p.score}%</div>
+    </div>
+  `).join('');
+
+  /* Key findings */
+  const findings = r.key_findings || [];
+  const findingsHtml = findings.map(f => {
+    const s = severityIcon(f.severity);
+    return `<div class="finding">
+      <i class="ti ${s.icon}" style="color:${s.color}"></i>
+      <div>
+        <div class="finding-title">${f.title}</div>
+        <div class="finding-detail">${f.detail}</div>
+      </div>
+    </div>`;
+  }).join('');
+
+  const recHtml = r.recommendation ? `
+    <div class="rec-box">
+      <i class="ti ti-bulb"></i>
+      <div>
+        <div class="rec-title">Recommended action</div>
+        <div class="rec-text">${r.recommendation}</div>
+      </div>
+    </div>` : '';
+
+  document.getElementById('findingsSection').innerHTML = `
+    <div class="findings-section">
+      <div class="findings-title"><i class="ti ti-list-search"></i> Key findings</div>
+      ${findingsHtml}
+      ${recHtml}
+    </div>`;
+
+  /* Scroll into view */
+  document.getElementById('resultsState').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+/* ── RESET ── */
+function resetTool() {
+  clearFile();
+  document.getElementById('analyzeBtn').disabled = true;
+  document.getElementById('resultsState').style.display = 'none';
+  document.getElementById('loadingState').style.display = 'none';
+  document.getElementById('idleState').style.display = 'flex';
+  analysisResult = null;
+}
+
+/* ── COPY REPORT ── */
+function copyReport() {
+  if (!analysisResult) return;
+  const r = analysisResult;
+  const params = (r.parameters || []).map(p =>
+    `  • ${p.label}: ${p.status.toUpperCase()} (${p.score}%) — ${p.detail}`
+  ).join('\n');
+  const findings = (r.key_findings || []).map(f =>
+    `  [${f.severity.toUpperCase()}] ${f.title}: ${f.detail}`
+  ).join('\n');
+  const text =
+`╔══════════════════════════════════════════════╗
+  SATYADOC — DOCUMENT FRAUD ANALYSIS REPORT
+╚══════════════════════════════════════════════╝
+
+Verdict       : ${r.verdict.toUpperCase()}
+Overall Score : ${r.overall_score}%
+Confidence    : ${r.confidence || 'N/A'}%
+Document Type : ${selectedDocType.toUpperCase()}
+Summary       : ${r.summary}
+
+PARAMETER BREAKDOWN:
+${params}
+
+KEY FINDINGS:
+${findings}
+
+RECOMMENDED ACTION:
+  ${r.recommendation || 'N/A'}
+
+─────────────────────────────────────────────
+Generated by SatyaDoc AI · ${new Date().toLocaleString('en-IN')}
+`;
+  navigator.clipboard.writeText(text)
+    .then(() => {
+      const btn = document.querySelector('.ra-btn.primary');
+      const orig = btn.innerHTML;
+      btn.innerHTML = '<i class="ti ti-check"></i> Copied!';
+      setTimeout(() => { btn.innerHTML = orig; }, 2000);
+    })
+    .catch(() => alert('Copy failed. Please copy manually.'));
+}
+
+/* ── FAQ ── */
+function toggleFaq(el) {
+  const isOpen = el.classList.contains('open');
+  document.querySelectorAll('.faq-item').forEach(f => f.classList.remove('open'));
+  if (!isOpen) el.classList.add('open');
+}
+
+</script>
+</body>
+</html>
